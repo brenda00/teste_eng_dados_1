@@ -1,61 +1,47 @@
 import unittest
-from pyspark.sql import SparkSession
-from pyspark.sql.functions import col, when
-import sys
-import io
+import re
 
+# ========================
 # Função a ser testada
-def validar_telefone(df):
-    return df.withColumn(
-        "telefone_valido",
-        when(col("num_telefone_cliente").rlike(r"^\(\d{2}\)\d{5}-\d{4}$"), True).otherwise(False)
-    )
+# ========================
+def validar_telefone(telefone: str) -> bool:
+    """
+    Valida se o telefone está no formato (NN)NNNNN-NNNN
+    """
+    if telefone is None:
+        return False
+    padrao = r"^\(\d{2}\)\d{5}-\d{4}$"
+    return bool(re.match(padrao, telefone))
 
-# Classe de testes
-class TestValidacaoTelefone(unittest.TestCase):
+# ========================
+# Testes unitários
+# ========================
+class TestValidarTelefone(unittest.TestCase):
 
-    @classmethod
-    def setUpClass(cls):
-        cls.spark = SparkSession.builder \
-            .appName("Teste Unitário - Telefone") \
-            .master("local[*]") \
-            .getOrCreate()
+    def test_happy_path(self):
+        self.assertTrue(validar_telefone("(11)91234-5678"))
 
-        cls.schema = ["cod_cliente", "num_telefone_cliente"]
+    def test_formatacao_errada(self):
+        self.assertFalse(validar_telefone("11-91234-5678"))
+        self.assertFalse(validar_telefone("11912345678"))
+        self.assertFalse(validar_telefone(""))
 
-    def test_telefone_valido(self):
-        dados = [("1", "(11)91234-5678"), ("2", "(99)98765-4321")]
-        df = self.spark.createDataFrame(dados, self.schema)
-        resultado = validar_telefone(df)
-        valores = resultado.select("telefone_valido").rdd.flatMap(lambda x: x).collect()
-        self.assertTrue(all(valores))  # todos devem ser True
+    def test_borda_caracteres(self):
+        self.assertFalse(validar_telefone("(1)12345-6789"))   # DDD com 1 dígito
+        self.assertFalse(validar_telefone("(111)12345-6789")) # DDD com 3 dígitos
 
-    def test_telefone_invalido(self):
-        dados = [("1", "11912345678"), ("2", "abcd")]
-        df = self.spark.createDataFrame(dados, self.schema)
-        resultado = validar_telefone(df)
-        valores = resultado.select("telefone_valido").rdd.flatMap(lambda x: x).collect()
-        self.assertTrue(all([not x for x in valores]))  # todos devem ser False
+    def test_nulo(self):
+        self.assertFalse(validar_telefone(None))
 
-    def test_telefone_nulo_ou_vazio(self):
-        dados = [("1", None), ("2", ""), ("3", " ")]
-        df = self.spark.createDataFrame(dados, self.schema)
-        resultado = validar_telefone(df)
-        valores = resultado.select("telefone_valido").rdd.flatMap(lambda x: x).collect()
-        self.assertTrue(all([not x for x in valores]))  # todos devem ser False
+    def test_caracteres_invalidos(self):
+        self.assertFalse(validar_telefone("(11)ABCDE-FGHI"))
+        self.assertFalse(validar_telefone("(11)9123A-5678"))
 
-# Execução dos testes (se estiver rodando como script)
-
-if __name__ == "__main__":
-    # Redireciona stdout para capturar o resultado
-    resultado_buffer = io.StringIO()
-    runner = unittest.TextTestRunner(stream=resultado_buffer, verbosity=2)
-    suite = unittest.defaultTestLoader.loadTestsFromTestCase(TestValidacaoTelefone)
-    runner.run(suite)
-
-    # Salva em arquivo
-    with open("/testeunitario/resultados.txt", "w", encoding="utf-8") as f:
-        f.write(resultado_buffer.getvalue())
-
-    # Também imprime no terminal
-    print(resultado_buffer.getvalue())
+# ========================
+# Execução e resultado
+# ========================
+if __name__ == '__main__':
+    # Execução dos testes + escrita do resultado
+    with open("../testeunitario/resultados.txt", "w") as f:
+        runner = unittest.TextTestRunner(stream=f, verbosity=2)
+        unittest.main(testRunner=runner, exit=False)

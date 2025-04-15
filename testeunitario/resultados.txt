@@ -1,0 +1,10 @@
+test_borda_caracteres (__main__.TestValidarTelefone) ... ok
+test_caracteres_invalidos (__main__.TestValidarTelefone) ... ok
+test_formatacao_errada (__main__.TestValidarTelefone) ... ok
+test_happy_path (__main__.TestValidarTelefone) ... ok
+test_nulo (__main__.TestValidarTelefone) ... ok
+
+----------------------------------------------------------------------
+Ran 5 tests in 0.001s
+
+OK

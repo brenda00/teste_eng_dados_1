@@ -1,0 +1,40 @@
+# Python
+__pycache__/
+*.py[cod]
+*.log
+*.sqlite3
+.env
+venv/
+.envrc
+.DS_Store
+
+# PySpark temporary files
+.metastore_db/
+spark-warehouse/
+.derby.log
+
+# Jupyter Notebook checkpoints
+.ipynb_checkpoints/
+
+# Terraform
+*.tfstate
+*.tfstate.*
+.tfvars
+.terraform/
+.terraform.lock.hcl
+crash.log
+
+# VSCode
+.vscode/
+
+# IntelliJ / PyCharm
+.idea/
+*.iml
+
+# Arquivos de output ou temporários
+*.tmp
+*.bak
+*.zip
+*.egg-info/
+dist/
+build/

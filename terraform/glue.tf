@@ -4,7 +4,7 @@ resource "aws_glue_job" "glue_job" {
   role_arn          = aws_iam_role.glue_job.arn
   glue_version      = "5.0"
   worker_type       = "G.1X"
-  number_of_workers = 2
+  number_of_workers = 10
   timeout           = 5
 
   command {
@@ -22,14 +22,15 @@ resource "aws_glue_job" "glue_job" {
   
 }
 
+resource "aws_glue_catalog_database" "silver" {
+  name = "db_silver"
+}
+
 # Databases para Bronze e Silver
 resource "aws_glue_catalog_database" "bronze" {
   name = "db_bronze"
 }
 
-resource "aws_glue_catalog_database" "silver" {
-  name = "db_silver"
-}
 
 # Crawler Bronze
 resource "aws_glue_crawler" "bronze_crawler" {
@@ -39,7 +40,7 @@ resource "aws_glue_crawler" "bronze_crawler" {
   description   = "Crawler para camada bronze do cliente"
 
   s3_target {
-    path = "s3://${var.prefix}-${var.bucket_names[0]}"
+    path = "s3://etlproj-bronze/tabela_cliente_landing/"
   }
 
   schema_change_policy {
@@ -67,7 +68,7 @@ resource "aws_glue_crawler" "silver_crawler" {
   description   = "Crawler para camada silver do cliente"
 
   s3_target {
-    path = "s3://${var.prefix}-${var.bucket_names[1]}"
+    path = "s3://etlproj-silver/tb_cliente/"
   }
 
   schema_change_policy {

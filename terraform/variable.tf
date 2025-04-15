@@ -14,10 +14,10 @@ variable "prefix" {
 
 # Prefix configuration and project common tags
 locals {
-  glue_bucket = "${var.prefix}-${var.bucket_names[4]}"
+  glue_bucket = "${var.prefix}-${var.bucket_names[5]}"
   prefix      = var.prefix
   common_tags = {
-    Project = "trn-cc-bg-aws"
+    projeto = "teste_eng_dados"
   }
 }
 
@@ -25,10 +25,11 @@ variable "bucket_names" {
   description = "s3 bucket names"
   type        = list(string)
   default = [
-    "bucket-bronzee",
-    "bucket-silveer",
-    "processing-zone",
-    "consumer-zone",
+    "landing-zone",
+    "bronze",
+    "silver",
+    "gold",
+    "logs",
     "aws-glue-scripts"
   ]
 }

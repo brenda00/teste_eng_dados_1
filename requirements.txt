@@ -1,4 +1,2 @@
-pyspark==3.3.2
-delta-spark==1.0.0
-jdk
-numpy
+pyspark==3.5.3
+delta-spark==3.3.0

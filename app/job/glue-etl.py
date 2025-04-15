@@ -36,12 +36,17 @@ def process_client_data(spark, input_path, bronze_path, silver_path):
         .withColumn("nm_cliente", upper(col("nm_cliente"))) \
         .withColumnRenamed("telefone_cliente", "num_telefone_cliente")
 
+    print("camada bronze com telefone modificado")
+    df_bronze.show(10)
+
     df_bronze.write \
         .mode("overwrite") \
         .partitionBy("anomesdia") \
         .option("compression", "snappy") \
         .format("parquet") \
         .save(bronze_path)
+    
+    print("Salvar arquivo na camada bronze")
 
     #Deduplicação para a camada Silver
     window_spec = Window.partitionBy("cod_cliente").orderBy(col("dt_atualizacao").desc())
@@ -67,9 +72,9 @@ def process_client_data(spark, input_path, bronze_path, silver_path):
 
 def main():
     spark = create_spark_session()
-    input_path = "/project_etl/test_eng_dados_1/datasets/clientes_sinteticos.csv"
-    bronze_path = "s3a://bucket-bronzee/tabela_cliente_landing"
-    silver_path = "s3a://bucket-silveer/tb_cliente"
+    input_path =  "s3://etlproj-landing-zone/arquivo/clientes_sinteticos.csv"
+    bronze_path = "s3a://etlproj-bronze/tabela_cliente_landing"
+    silver_path = "s3a://etlproj-silver/tb_cliente"
 
     process_client_data(spark, input_path, bronze_path, silver_path)
 

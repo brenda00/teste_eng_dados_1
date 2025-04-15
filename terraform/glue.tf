@@ -1,10 +1,10 @@
 
 resource "aws_glue_job" "glue_job" {
-  name              = "glue_script"
+  name              = "pipeline_clientes"
   role_arn          = aws_iam_role.glue_job.arn
   glue_version      = "5.0"
   worker_type       = "G.1X"
-  number_of_workers = 10
+  number_of_workers = 2
   timeout           = 5
 
   command {
@@ -14,19 +14,21 @@ resource "aws_glue_job" "glue_job" {
 
   default_arguments = {
     "--additional-python-modules" = "delta-spark==1.0.0"
-    "--extra-jars" = "s3://owshq-aws-glue-scripts-777696598735/jars/delta-core_2.12-1.0.0.jar"
+    "--extra-jars" = "s3://${var.prefix}-${var.bucket_names[5]}/jars/delta-core_2.12-1.0.0.jar"
     "--conf spark.delta.logStore.class" = "org.apache.spark.sql.delta.storage.S3SingleDriverLogStore"
     "--conf spark.sql.extensions" = "io.delta.sql.DeltaSparkSessionExtension"
+    
   }
+  
 }
 
 # Databases para Bronze e Silver
 resource "aws_glue_catalog_database" "bronze" {
-  name = "bronze-database"
+  name = "db_bronze"
 }
 
 resource "aws_glue_catalog_database" "silver" {
-  name = "silver-database"
+  name = "db_silver"
 }
 
 # Crawler Bronze

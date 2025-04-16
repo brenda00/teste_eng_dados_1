@@ -1,16 +1,11 @@
 from airflow import DAG
+from airflow.providers.amazon.aws.operators.glue import GlueJobOperator
 from airflow.operators.python import PythonOperator
 from airflow.utils.dates import days_ago
 from datetime import datetime
 import boto3
 
-# Função para iniciar o job Glue
-def start_glue_job(job_name):
-    glue_client = boto3.client('glue', region_name='us-east-1')
-    response = glue_client.start_job_run(JobName=job_name)
-    print(f"Job iniciado com ID: {response['JobRunId']}")
-
-# Função para rodar crawlers após o job
+# Função para rodar os crawlers após o job Glue
 def start_glue_crawlers():
     glue_client = boto3.client('glue', region_name='us-east-1')
     crawlers = ['etlproj-bronze-crawler', 'etlproj-silver-crawler']
@@ -30,14 +25,16 @@ with DAG(
     default_args=default_args,
     max_active_runs=1,
     schedule_interval=None,
-    description='Executa o ETL para o pipeline de clientes',
+    description='Executa o ETL para o pipeline de clientes ',
     tags=["etl", "clientes"]
 ) as dag:
 
-    iniciar_glue_pipeline_clientes = PythonOperator(
-        task_id='iniciar_job_glue',
-        python_callable=start_glue_job,
-        op_args=['pipeline_clientes']
+    iniciar_glue_pipeline_clientes = GlueJobOperator(
+        task_id='iniciar_job_glue_clientes',
+        job_name='pipeline_clientes',
+        region_name='us-east-1',
+        wait_for_completion=True,
+        dag=dag
     )
 
     iniciar_crawlers = PythonOperator(
@@ -45,11 +42,12 @@ with DAG(
         python_callable=start_glue_crawlers
     )
 
-    iniciar_glue_pipeline_dataquality = PythonOperator(
+    iniciar_glue_pipeline_dataquality = GlueJobOperator(
         task_id='iniciar_job_glue_dataquality',
-        python_callable=start_glue_job,
-        op_args=['dataquality']
+        job_name='dataquality',
+        region_name='us-east-1',
+        wait_for_completion=True,
+        dag=dag
     )
 
-    # Ordem de execução: primeiro o Glue Job, depois os Crawlers, depois o job de Data Quality
     iniciar_glue_pipeline_clientes >> iniciar_crawlers >> iniciar_glue_pipeline_dataquality

@@ -31,8 +31,18 @@ resource "aws_s3_object" "upload_script_glue" {
 resource "aws_s3_object" "upload_requirements_airflow" {
   bucket = "${var.prefix}-${var.bucket_names[6]}"
   key    = "etlproj-airflow-pipeline-clientes/requirements.txt"
-  source = "../teste_eng_dados_1/requirements.txt"
+  source = "../requirements.txt" 
   content_type = "txt"
+
+  tags = local.common_tags
+}
+
+# Upload da DAG do Airflow
+resource "aws_s3_object" "upload_dag_airflow" {
+  bucket = "${var.prefix}-${var.bucket_names[6]}"
+  key    = "etlproj-airflow-pipeline-clientes/dags/dag_pipeline_clientes.py" 
+  source = "../airflow/dags/dag_pipeline_clientes.py"
+  content_type = "python"
 
   tags = local.common_tags
 }

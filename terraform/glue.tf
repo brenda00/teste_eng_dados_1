@@ -6,7 +6,7 @@ resource "aws_glue_job" "glue_job" {
   role_arn          = aws_iam_role.glue_job.arn              
   glue_version      = "5.0"                                  
   worker_type       = "G.1X"                                 
-  number_of_workers = 2                                      
+  number_of_workers = 10                                      
   timeout           = 5                                      
 
   command {

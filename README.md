@@ -60,7 +60,7 @@ Além do armazenamento do dado será necessaria uma governança de acesso a nív
 
 ### 5. `5.TesteUnitario/`
 - **Objetivo:** validar funções críticas da transformação
-- Testes com `unittest` para funções como limpeza de nome, validação de telefone
+- Testes com `unittest` para função, validação de telefone
 - Casos cobertos:
   - Happy Path
   - Casos extremos (valores nulos, espaços, repetições)

@@ -1,10 +1,9 @@
-
 resource "aws_glue_job" "glue_job" {
   name              = "pipeline_clientes"
   role_arn          = aws_iam_role.glue_job.arn
   glue_version      = "5.0"
   worker_type       = "G.1X"
-  number_of_workers = 10
+  number_of_workers = 2
   timeout           = 5
 
   command {
@@ -20,6 +19,18 @@ resource "aws_glue_job" "glue_job" {
     
   }
   
+}
+
+#Trigger para iniciar automaticamente o Job após criação
+resource "aws_glue_trigger" "start_on_creation" {
+  name     = "${var.prefix}-trigger-start-job"
+  type     = "ON_DEMAND"
+  actions {
+    job_name = aws_glue_job.glue_job.name
+  }
+
+  # Isso garante que o trigger só tente iniciar o job depois que ele estiver pronto
+  depends_on = [aws_glue_job.glue_job]
 }
 
 resource "aws_glue_catalog_database" "silver" {

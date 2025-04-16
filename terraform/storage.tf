@@ -25,6 +25,15 @@ resource "aws_s3_object" "upload_script_glue" {
   tags = local.common_tags
 }
 
+resource "aws_s3_object" "upload_script_dataquality" {
+  bucket = "${var.prefix}-${var.bucket_names[5]}" 
+  key    = "dataquality/script_data_quality.py"                     
+  source = "../dataquality/script_data_quality.py" 
+  content_type = "python"
+
+  tags = local.common_tags
+}
+
 resource "aws_s3_object" "upload_jar_delta" {
   bucket = "${var.prefix}-${var.bucket_names[5]}" 
   key    = "jars/delta-core_2.12-1.0.0.jar"                     

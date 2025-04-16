@@ -41,7 +41,7 @@ class TestValidarTelefone(unittest.TestCase):
 # Execução e resultado
 # ========================
 if __name__ == '__main__':
-    # Execução dos testes + escrita do resultado
+   
     with open("../testeunitario/resultados.txt", "w") as f:
         runner = unittest.TextTestRunner(stream=f, verbosity=2)
         unittest.main(testRunner=runner, exit=False)

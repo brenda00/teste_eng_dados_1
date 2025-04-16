@@ -1,2 +1,7 @@
 pyspark==3.5.3
 delta-spark==3.3.0
+apache-airflow==2.8.1
+apache-airflow-providers-amazon==8.16.0
+boto3==1.34.54
+botocore==1.34.54
+s3fs==2024.3.1

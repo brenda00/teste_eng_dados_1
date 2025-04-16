@@ -98,8 +98,13 @@ terraform init
 terraform plan
 terraform apply
 
-# 4. Execução
- 1. ETL/script.py (Terraform - AWS Glue Job)
- 2. AnaliseDados/analise.py (Terraform - AWS Glue Job Notebook)
- 3. DataQuality/script_data_quality.py (Terraform - AWS Glue Job)
- 4. python 5.TesteUnitario/unit_test.py (local)
+# 4. Orquestração via Airflow
+# A DAG `pipeline_clientes` controlará a sequência:
+# ETL → Crawler Bronze → Crawler Silver → Data Quality
+
+# 5. Execução
+ 1. ETL/script.py (AWS Glue Job)
+ 2. AnaliseDados/analise.py (AWS Glue Job Notebook / resultado txt local no diretorio analiseDados)
+ 4. DataQuality/script_data_quality.py (AWS Glue Job)
+ 5. python TesteUnitario/unit_test.py (local)
+ 6. Script terraform/ (local, utilizar o passo 3 para execução)

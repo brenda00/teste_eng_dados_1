@@ -80,14 +80,7 @@ Além do armazenamento do dado será necessaria uma governança de acesso a nív
 
 ---
 
-## 💻 Execução Local (Jupyter Notebook)
-
-### Pré-requisitos
-- Python 3.9+
-- Java 11 ou superior
-- Spark 3.3+
-- Hadoop AWS, boto3, delta-spark
-- AWS CLI configurado
+## 💻 Execução 
 
 ### Etapas
 
@@ -105,8 +98,8 @@ terraform init
 terraform plan
 terraform apply
 
-# 4. Execute os scripts (modo local caso queira um teste local)
-python 1.ETL/script.py
-python 2.AnaliseDados/analise.py
-python 4.DataQuality/script_data_quality.py
-python 5.TesteUnitario/unit_test.py
+# 4. Execução
+ 1. ETL/script.py (Terraform - AWS Glue Job)
+ 2. AnaliseDados/analise.py (Terraform - AWS Glue Job Notebook)
+ 3. DataQuality/script_data_quality.py (Terraform - AWS Glue Job)
+ 4. python 5.TesteUnitario/unit_test.py (local)

@@ -33,6 +33,29 @@ resource "aws_glue_trigger" "start_on_creation" {
   depends_on = [aws_glue_job.glue_job]
 }
 
+resource "aws_glue_job" "glue_job_dataquality" {
+  name              = "dataquality"
+  role_arn          = aws_iam_role.glue_job.arn
+  glue_version      = "5.0"
+  worker_type       = "G.1X"
+  number_of_workers = 2
+  timeout           = 5
+
+  command {
+    script_location = "s3://${local.glue_bucket}/dataquality/script_data_quality.py"
+    python_version  = "3"
+  }
+
+  default_arguments = {
+    "--additional-python-modules" = "delta-spark==1.0.0"
+    "--extra-jars" = "s3://${var.prefix}-${var.bucket_names[5]}/jars/delta-core_2.12-1.0.0.jar"
+    "--conf spark.delta.logStore.class" = "org.apache.spark.sql.delta.storage.S3SingleDriverLogStore"
+    "--conf spark.sql.extensions" = "io.delta.sql.DeltaSparkSessionExtension"
+    
+  }
+}
+
+
 resource "aws_glue_catalog_database" "silver" {
   name = "db_silver"
 }
